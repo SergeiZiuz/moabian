@@ -41,7 +41,7 @@ class Send:
 
     def __init__(self) -> None:
         self.__table_name = "BALL"
-        self.__connection_string = "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=moabseziuzmtc;AccountKey=nnQ2NJWQt8JAtU2mJNQ2+9SvpxatO3qvAo+4xIQRCPYycX5S+UlwF6c5awf743UXvKxmcstQZ3kGdFLJs5bIcw=="
+        self.__connection_string = ""
         self.__table_service_client = TableServiceClient.from_connection_string(conn_str=self.__connection_string).get_table_client(table_name=self.__table_name)
         self.createRow({
             u'PartitionKey': str(getHostIP()).replace(".", ""),
