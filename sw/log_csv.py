@@ -13,6 +13,9 @@ sys.path.append(
 
 from stream import ball_detect
 
+ball = ball_detect.Ball()
+send = ball_detect.Send()
+OLD_STATUS_OF_BALL = None
 
 def log_decorator(fn, logfile="/tmp/log.csv"):
     # Add the header line
@@ -50,10 +53,19 @@ def log_decorator(fn, logfile="/tmp/log.csv"):
         env_state, ball_detected, buttons = state
         x, y, vel_x, vel_y, sum_x, sum_y = env_state
 
-        if ball_detected:
-            ball_detect.ball_detected.ball_is(True)
-        else:
-            ball_detect.ball_detected.ball_is(False)
+        status_of_ball = None
+        global OLD_STATUS_OF_BALL
+
+        if ball_detected != OLD_STATUS_OF_BALL:
+            if ball_detected:
+                # ball_detect.ball_detected.ball_is(True)
+                status_of_ball = ball.getEntity(True)
+            else:
+                # ball_detect.ball_detected.ball_is(False)
+                status_of_ball = ball.getEntity(False)
+            send.sendStatusOfBall(status_of_ball)
+            OLD_STATUS_OF_BALL = ball_detected
+
         # Deconstruct action
         pitch, roll = action
         # combine all to a list for the log
