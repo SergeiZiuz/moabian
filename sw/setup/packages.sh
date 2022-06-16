@@ -37,6 +37,10 @@ numpy=(
 echo "• installing: numpy"
 apt-get install -qq --no-install-recommends ${numpy[*]}
 
+# Azure table https://docs.microsoft.com/en-us/python/api/overview/azure/data-tables-readme?view=azure-python
+echo "• installing: the Azure Tables client library"
+pip install azure-data-tables
+
 # OpenCV https://www.piwheels.org/project/opencv-contrib-python-headless/
 # https://www.pyimagesearch.com/2019/09/16/install-opencv-4-on-raspberry-pi-4-and-raspbian-buster/
 opencv=(
