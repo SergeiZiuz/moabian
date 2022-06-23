@@ -60,5 +60,5 @@ class Send:
         try:
             entity = self.__table_service_client.create_entity(entity=ball)
         except ResourceExistsError as e:
-            print(e)
+            print("Moab is registreted at Azure table")
 
