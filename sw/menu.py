@@ -32,6 +32,10 @@ from controllers import (
     dump_ball_controller,
     BrainNotFound,
 )
+from ball_detect import (
+    Ball,
+    Send
+)
 
 LOG = logging.getLogger(__name__)
 
@@ -388,23 +392,48 @@ def main_menu(
                 if menu_list[index].is_controller:
                     controller_start_time = time.time()
 
+                    old_status_ball = False
+                    status_of_ball = None
+                    ball = Ball()
+                    send = Send()
+
                     # If it's a controller run the control loop
                     try:
                         while not buttons.menu_button:
                             action, info = controller((state, detected, buttons))
                             state, detected, buttons = env.step(action)
 
+                            # Send status of ball to Azure Table 
+                            if old_status_ball != detected:
+                                if detected:
+                                    status_of_ball = ball.getEntity(True)
+                                else:
+                                    status_of_ball = ball.getEntity(False)
+                                send.sendStatusOfBall(status_of_ball)
+                                old_status_ball = detected
+                            # --
+
                             # If the controller has been running for more than
                             # kiosk_timeout seconds, exit, and dump the ball towards
                             # one side and wait until the ball is detected again
                             if kiosk:
                                 if time.time() - controller_start_time > kiosk_timeout:
+                                    # Send status of ball to Azure Table
+                                    status_of_ball = ball.getEntity(False)
+                                    send.sendStatusOfBall(status_of_ball)
+                                    old_status_ball = detected
+                                    #--
                                     prev_state = (state, detected, buttons)
                                     next_state, kiosk_exit = kiosk_mode(
                                         env, prev_state, kiosk_dump_location
                                     )
                                     state, detected, buttons = next_state
                                     controller_start_time = time.time()
+                                    # Send status of ball to Azure Table
+                                    status_of_ball = ball.getEntity(True)
+                                    send.sendStatusOfBall(status_of_ball)
+                                    old_status_ball = detected
+                                    #--
                                     # Whether the menu button was pressed in kiosk mode
                                     if kiosk_exit:
                                         break
