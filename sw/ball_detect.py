@@ -1,6 +1,4 @@
 import socket
-import sqlite3
-from sqlite3 import Error
 
 from azure.data.tables import TableServiceClient, UpdateMode
 from azure.core.exceptions import ResourceExistsError
